@@ -1,0 +1,55 @@
+Sus scrofa mitochondrion, complete genome
+NCBI Reference Sequence: NC_000845.1
+SOURCE      mitochondrion Sus scrofa (pig)
+
+Takifugu rubripes mitochondrion, complete genome
+NCBI Reference Sequence: NC_004299.1
+SOURCE      mitochondrion Takifugu rubripes (Fugu rubripes)
+
+Rattus norvegicus strain Wistar mitochondrion, complete genome
+NCBI Reference Sequence: AC_000022.2
+SOURCE      mitochondrion Rattus norvegicus (Norway rat)
+
+Pongo abelii mitochondrion, complete genome
+NCBI Reference Sequence: NC_002083.1
+SOURCE      mitochondrion Pongo abelii (Sumatran orangutan)
+
+Pan troglodytes mitochondrion, complete genome
+NCBI Reference Sequence: NC_001643.1
+SOURCE      mitochondrion Pan troglodytes (chimpanzee)
+
+Homo sapiens neanderthalensis mitochondrion, complete genome
+NCBI Reference Sequence: NC_011137.1
+SOURCE      mitochondrion Homo sapiens neanderthalensis (Neandertal)
+
+Homo sapiens mitochondrion, complete genome
+NCBI Reference Sequence: NC_012920.1
+SOURCE      mitochondrion Homo sapiens (human)
+
+Gorilla gorilla mitochondrion, complete genome
+NCBI Reference Sequence: NC_001645.1
+SOURCE      mitochondrion Gorilla gorilla (western gorilla)
+
+Canis lupus familiaris mitochondrion, complete genome
+NCBI Reference Sequence: NC_002008.4
+SOURCE      mitochondrion Canis lupus familiaris (dog)
+
+Carassius auratus auratus mitochondrion, complete genome
+NCBI Reference Sequence: NC_006580.1
+SOURCE      mitochondrion Carassius auratus auratus (goldfish)
+
+Chamaeleo calyptratus mitochondrion, complete genome
+NCBI Reference Sequence: NC_012420.1
+SOURCE      mitochondrion Chamaeleo calyptratus (veiled chameleon)
+
+Daboia russellii mitochondrion, complete genome
+NCBI Reference Sequence: NC_011391.1
+SOURCE      mitochondrion Daboia russellii (Russell's viper)
+
+Delphinus capensis mitochondrion, complete genome
+NCBI Reference Sequence: NC_012061.1
+SOURCE      mitochondrion Delphinus capensis (Longbeaked common dolphin)
+
+Equus caballus mitochondrion, complete genome
+NCBI Reference Sequence: NC_001640.1
+SOURCE      mitochondrion Equus caballus (horse)
