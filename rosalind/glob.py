@@ -8,10 +8,26 @@ class NW:
     s = ""
     t = ""
 
-    def __init__(self,filename = 'data/blosum62.txt'):
+    def __init__(self):
+
         self.blosum = self.setBlosum(filename)
 
-    def setBlosum(self,filename):
+    def setBlosum(self,b):
+        blosum = {}
+        for i,j in b:
+            x,y = i
+            blosum[x,y] = j
+            blosum[y,x] = j
+
+    def setBlosum62(self):
+        from Bio.SubsMat.MatrixInfo import blosum62
+        self.setBlosum(blosum62)
+
+    def setBlosum50(self):
+        from Bio.SubsMat.MatrixInfo import blosum62
+        self.setBlosum(blosum62)
+
+    def setBlosumFromFile(self,filename):
         l = [[j for j in i.strip().split(" ")] for i in open(filename).readlines()]
         j = l[0]
         i = [a[0] for a in l[1:]]
@@ -19,7 +35,7 @@ class NW:
         for ii in range(len(i)):
             for jj in range(len(j)):
                 b[i[ii],j[jj]] = int(l[ii+1][jj+1])
-        return b
+        self.blosum = b
 
     def cost(self,M,i,j):
         iGap = (M[i-1,j][0]+self.gapPenalty, (i-1,j) )
