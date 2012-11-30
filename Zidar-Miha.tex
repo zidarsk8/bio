@@ -1,0 +1,193 @@
+% Homework report template for courses lectured by Blaz Zupan.
+% For more on LaTeX please consult its documentation pages, or
+% read tutorials like http://tobi.oetiker.ch/lshort/lshort.pdf.
+%
+% Use pdflatex to produce a PDF of a report.
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{a4wide}
+\usepackage{fullpage}
+\usepackage[toc,page]{appendix}
+\usepackage[pdftex]{graphicx} % for figures
+\usepackage{setspace}
+\usepackage{color}
+\definecolor{light-gray}{gray}{0.95}
+\usepackage{listings} % for inclusion of Python code
+\usepackage{hyperref}
+\renewcommand{\baselinestretch}{1.2}
+
+\lstset{ % style for Python code, improve if needed
+language=Python,
+basicstyle=\footnotesize,
+basicstyle=\ttfamily\footnotesize\setstretch{1},
+backgroundcolor=\color{light-gray},
+}
+
+\title{Evolutionary Tree}
+\author{Zidar Miha (63060317)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+The goal of this assignment was to download and compare a few mitochondrial sequences, based on \textit{COX3} gene, with \textit{Needleman-Wunsch} algorithm and to construct a dendrogram. The algorithm used a \textit{Blosum50} table and a linear gap penalty.
+
+\section{Data}
+
+We used sequences of 14 different animals, show in the Animal table \ref{animalTable}
+Most of the homeworks will rely on some data. Describe what data was used, where did it come from, and report on some basic statistics (e.g., the number and size of the sequences).
+
+
+\begin{table}[htbp]
+\caption{Table of animal species used.}
+\label{animalTable}
+\begin{center}
+\begin{tabular}{rllp{6cm}}
+\hline
+Index & GeneBank id & English name & Latin name\\
+\hline
+  1 &   NC\_000845.1 &                        pig &                     Sus scrofa \\
+  2 &   NC\_004299.1 &              Fugu rubripes &              Takifugu rubripes \\ 
+  3 &   AC\_000022.2 &                 Norway rat &              Rattus norvegicus \\
+  4 &   NC\_002083.1 &         Sumatran orangutan &                   Pongo abelii \\
+  5 &   NC\_001643.1 &                 chimpanzee &                Pan troglodytes \\
+  6 &   NC\_011137.1 &                 Neandertal &  Homo sapiens neanderthalensis \\
+  7 &   NC\_012920.1 &                      human &                   Homo sapiens \\
+  8 &   NC\_001645.1 &            western gorilla &                Gorilla gorilla \\
+  9 &   NC\_002008.4 &                        dog &         Canis lupus familiaris \\
+ 10 &   NC\_006580.1 &                   goldfish &      Carassius auratus auratus \\
+ 11 &   NC\_012420.1 &           veiled chameleon &          Chamaeleo calyptratus \\
+ 12 &   NC\_011391.1 &            Russell's viper &               Daboia russellii \\
+ 13 &   NC\_012061.1 &  Longbeaked common dolphin &             Delphinus capensis \\
+ 14 &   NC\_001640.1 &                      horse &                 Equus caballus 
+
+\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\begin{table}[htbp]
+\footnotesize
+\label{scoreTab}
+\begin{center}
+\begin{tabular}{r|rrrrrrrrrrrrrr}
+1. & 1814 &      &      &      &      &      &      &      &      &      &      &      &      &     \\
+2. & 1574 & 1826 &      &      &      &      &      &      &      &      &      &      &      &     \\
+3. & 1641 & 1545 & 1816 &      &      &      &      &      &      &      &      &      &      &     \\
+4. & 1592 & 1531 & 1586 & 1804 &      &      &      &      &      &      &      &      &      &     \\
+5. & 1613 & 1564 & 1643 & 1703 & 1820 &      &      &      &      &      &      &      &      &     \\
+6. & 1597 & 1535 & 1614 & 1702 & 1766 & 1816 &      &      &      &      &      &      &      &     \\
+7. & 1622 & 1546 & 1625 & 1713 & 1777 & 1798 & 1823 &      &      &      &      &      &      &     \\
+8. & 1603 & 1542 & 1611 & 1727 & 1757 & 1753 & 1764 & 1814 &      &      &      &      &      &     \\
+9. & 1665 & 1555 & 1672 & 1567 & 1603 & 1585 & 1608 & 1570 & 1832 &      &      &      &      &     \\
+10. & 1582 & 1743 & 1552 & 1551 & 1600 & 1574 & 1585 & 1583 & 1556 & 1824 &      &      &      &     \\
+11. & 1305 & 1305 & 1320 & 1264 & 1291 & 1278 & 1299 & 1307 & 1296 & 1305 & 1827 &      &      &     \\
+12. & 1401 & 1414 & 1405 & 1386 & 1409 & 1395 & 1406 & 1422 & 1381 & 1417 & 1290 & 1796 &      &     \\
+13. & 1698 & 1547 & 1628 & 1580 & 1622 & 1615 & 1640 & 1607 & 1682 & 1553 & 1329 & 1395 & 1826 &     \\
+14. & 1718 & 1556 & 1658 & 1585 & 1606 & 1604 & 1615 & 1608 & 1688 & 1564 & 1310 & 1410 & 1685 & 1815\\
+
+\hline
+ & 1. & 2. & 3. & 4. & 5. & 6. & 7. & 8. & 9. & 10. & 11. & 12. & 13. & 14. \\
+
+\end{tabular}
+\caption{Table comparison scores for all animal pairs. See Animal table \ref{animalTable} for index description}
+\end{center}
+\end{table}
+
+
+
+\section{Methods}
+
+Report on the formal and computational methods that solve the problem from the homework. This can include the formal description of methods (equations),  outline of the algorithm or description of its  implementation in code. You can even include a short snippet that you find interesting and that is essential. If needed, you can illustrate your method in a figure or a diagram, like in Figure~\ref{fig-example}. Make sure you refer to all the figures and tables from the text in the report, as illustrated by an example in the previous sentence.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[scale=0.7]{img/dendrogram-gap-11.png}
+\caption{Every figure should include a caption with a figure description.}
+\label{fig-example}
+\end{center}
+\end{figure}
+
+This part of the report can also include a short and illustrative code snippet. An example is provided below:
+
+\begin{lstlisting}
+def fib(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fib(n-1) + fib(n-2)
+\end{lstlisting}
+
+\section{Results}
+
+Report on results and provide short, preferably one-paragraph long discussion. Depending on a homework, you can present quantitative results of your experiments in the table (see Table~\ref{tab1}). Provide reference to every table from main text, just like we did in the previous sentence. Notice that Tables should not include vertical lines, and should include horizontal lines only to separate the header from the content and to indicate the end of the table.
+
+\begin{table}[htbp]
+\caption{Data attributes and their values.}
+\label{tab1}
+\begin{center}
+\begin{tabular}{llp{4cm}}
+\hline
+name & domain  & description \\
+\hline
+price & [0, 500] & item price in EUR\\
+weight & [1, 1000] & item weight in dag \\
+quality & [poor|acceptable|good] & quality of an item \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Structure of the Report}
+
+If needed, this section could be structured. If the homework is composed of several tasks (or questions), the report on each of them could be presented in a separate section (use \LaTeX's {\tt \\subsection} command). The report of the results should be brief. If really needed, any  more extensive results of your homework should be reported in the Appendix (see Appendix~\ref{app-res} and~\ref{app-code}).
+
+\subsection{Paragraphs}
+
+A short note on the paragraphs: these are introduced in \LaTeX\ by an empty line before the paragraph.
+
+\subsection*{Honor Code}
+
+% The following paragraph of your report should be included as is - do % not change it.
+
+My answers to homework are my own work. I did not make solutions or code available to anyone else. I did not engage in any other activities that will dishonestly improve my results or dishonestly improve/hurt the results of others.
+
+\appendix
+\appendixpage
+\section{\label{app-res}Detailed Results of Experiments}
+
+If you consider that report should include detailed results in the form of tables and figures, include them here. Essential results should be included in the main part of the report (section on results).
+
+\section{\label{app-code}Program Code}
+
+Each homework will require a development of specific implementation in Python. Most of the homeworks will request that this code is submitted as a separate document. Only if this is not the case, that is, the homework requests that you provide the entire code in the report, do so in this appendix. Following is an example, and includes a part of code from Orange (\url{http://www.biolab.si/orange}) that implements 
+clustering.
+
+\begin{lstlisting}
+import random
+import Orange
+
+data_names = ["iris", "housing", "vehicle"]
+data_sets = [Orange.data.Table(name) for name in data_names]
+
+print "%10s %3s %3s %3s" % ("", "Rnd", "Div", "HC")
+for data, name in zip(data_sets, data_names):
+    random.seed(42)
+    km_random = Orange.clustering.kmeans.Clustering(data, centroids = 3)
+    km_diversity = Orange.clustering.kmeans.Clustering(data, centroids = 3,
+        initialization=Orange.clustering.kmeans.init_diversity)
+    km_hc = Orange.clustering.kmeans.Clustering(data, centroids = 3,
+        initialization=Orange.clustering.kmeans.init_hclustering(n=100))
+    print "%10s %3d %3d %3d" % (name, km_random.iteration, \
+    km_diversity.iteration, km_hc.iteration)
+\end{lstlisting}
+
+\end{document}
