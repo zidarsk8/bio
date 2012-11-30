@@ -37,8 +37,7 @@ The goal of this assignment was to download and compare a few mitochondrial sequ
 
 \section{Data}
 
-We used sequences of 14 different animals, show in the Animal table \ref{animalTable}
-Most of the homeworks will rely on some data. Describe what data was used, where did it come from, and report on some basic statistics (e.g., the number and size of the sequences).
+We used sequences of 14 different animals, show in the Animal table \ref{animalTable}, that we downloaded from \url{http://www.ncbi.nlm.nih.gov/genbank/}. From the entire mitochondrial genome, we took out only \textit{COX3} gene for comparison. We also used the \textit{BloSum50} table, for getting the comparison costs for all Amino Acid pairs. You can find all \textit{BloSum} tables at \url{ftp://ftp.ncbi.nih.gov/blast/matrices/}
 
 
 \begin{table}[htbp]
@@ -71,6 +70,35 @@ Index & GeneBank id & English name & Latin name\\
 \end{table}
 
 
+\section{Methods}
+
+Report on the formal and computational methods that solve the problem from the homework. This can include the formal description of methods (equations),  outline of the algorithm or description of its  implementation in code. You can even include a short snippet that you find interesting and that is essential. If needed, you can illustrate your method in a figure or a diagram, like in Figure~\ref{fig-example}. Make sure you refer to all the figures and tables from the text in the report, as illustrated by an example in the previous sentence.
+
+This part of the report can also include a short and illustrative code snippet. An example is provided below:
+
+\begin{lstlisting}
+  for i=0 to len(s)
+    F(i,0) := d*i
+  for j=0 to len(t)
+    F(0,j) := d*j
+  for i=1 to len(s)
+    for j=1 to len(t)
+    {
+      Match := F(i-1,j-1) + S(s[i], t[j])
+      Delete := F(i-1, j) + d
+      Insert := F(i, j-1) + d
+      F(i,j) := max(Match, Insert, Delete)
+    }
+\end{lstlisting}
+Where $s$ and $t$ are input strings, $S$ is the blosum cost table and $F$ is our cost Matrix. The final comparison score is stored in the last element of $F$ matrix on $F[len(s),len(t)]$.
+
+
+
+\section{Results}
+
+Report on results and provide short, preferably one-paragraph long discussion. Depending on a homework, you can present quantitative results of your experiments in the table (see Table~\ref{tab1}). Provide reference to every table from main text, just like we did in the previous sentence. Notice that Tables should not include vertical lines, and should include horizontal lines only to separate the header from the content and to indicate the end of the table.
+
+
 
 \begin{table}[htbp]
 \footnotesize
@@ -101,11 +129,6 @@ Index & GeneBank id & English name & Latin name\\
 \end{table}
 
 
-
-\section{Methods}
-
-Report on the formal and computational methods that solve the problem from the homework. This can include the formal description of methods (equations),  outline of the algorithm or description of its  implementation in code. You can even include a short snippet that you find interesting and that is essential. If needed, you can illustrate your method in a figure or a diagram, like in Figure~\ref{fig-example}. Make sure you refer to all the figures and tables from the text in the report, as illustrated by an example in the previous sentence.
-
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[scale=0.7]{img/dendrogram-gap-11.png}
@@ -114,37 +137,7 @@ Report on the formal and computational methods that solve the problem from the h
 \end{center}
 \end{figure}
 
-This part of the report can also include a short and illustrative code snippet. An example is provided below:
 
-\begin{lstlisting}
-def fib(n):
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fib(n-1) + fib(n-2)
-\end{lstlisting}
-
-\section{Results}
-
-Report on results and provide short, preferably one-paragraph long discussion. Depending on a homework, you can present quantitative results of your experiments in the table (see Table~\ref{tab1}). Provide reference to every table from main text, just like we did in the previous sentence. Notice that Tables should not include vertical lines, and should include horizontal lines only to separate the header from the content and to indicate the end of the table.
-
-\begin{table}[htbp]
-\caption{Data attributes and their values.}
-\label{tab1}
-\begin{center}
-\begin{tabular}{llp{4cm}}
-\hline
-name & domain  & description \\
-\hline
-price & [0, 500] & item price in EUR\\
-weight & [1, 1000] & item weight in dag \\
-quality & [poor|acceptable|good] & quality of an item \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
 
 \subsection{Structure of the Report}
 
