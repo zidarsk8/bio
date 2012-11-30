@@ -72,9 +72,9 @@ Index & GeneBank id & English name & Latin name\\
 
 \section{Methods}
 
-Report on the formal and computational methods that solve the problem from the homework. This can include the formal description of methods (equations),  outline of the algorithm or description of its  implementation in code. You can even include a short snippet that you find interesting and that is essential. If needed, you can illustrate your method in a figure or a diagram, like in Figure~\ref{fig-example}. Make sure you refer to all the figures and tables from the text in the report, as illustrated by an example in the previous sentence.
+We used \textit{Needleman-Wunsch} algorithm with a fixed linear gap penalty $d=-11$ and \textit{Blosum50} scoring matrix, for global alignment of two sequences.\\
 
-This part of the report can also include a short and illustrative code snippet. An example is provided below:
+Here we have a simple pseudocode implementation of the \textit{Needleman-Wunsch} algorithm
 
 \begin{lstlisting}
   for i=0 to len(s)
@@ -90,13 +90,15 @@ This part of the report can also include a short and illustrative code snippet. 
       F(i,j) := max(Match, Insert, Delete)
     }
 \end{lstlisting}
-Where $s$ and $t$ are input strings, $S$ is the blosum cost table and $F$ is our cost Matrix. The final comparison score is stored in the last element of $F$ matrix on $F[len(s),len(t)]$.
+Where $s$ and $t$ are input strings, $S$ is the blosum cost table and $F$ is our cost Matrix. The final comparison score is stored in the last element of $F$ matrix on $F[len(s),len(t)]$.\\
 
+Testing the algorithm with different gap penalties didn't show any significant difference, if we kept the penalty withing the absolute bound of the maximum absolute value in the \textit{Blosum50} matrix. 
 
 
 \section{Results}
 
-Report on results and provide short, preferably one-paragraph long discussion. Depending on a homework, you can present quantitative results of your experiments in the table (see Table~\ref{tab1}). Provide reference to every table from main text, just like we did in the previous sentence. Notice that Tables should not include vertical lines, and should include horizontal lines only to separate the header from the content and to indicate the end of the table.
+Here we have a pairwise score comparions of all 14 animals (see Table~\ref{scoreTab}) and a dendrogram showing the animals in groups in acordance to their smimilarity score. Provide reference to every table from main text, just like we did in the previous sentence. Notice that Tables should not include vertical lines, and should include horizontal lines only to separate the header from the content and to indicate the end of the table.
+
 
 
 
@@ -131,56 +133,17 @@ Report on results and provide short, preferably one-paragraph long discussion. D
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[scale=0.7]{img/dendrogram-gap-11.png}
+\includegraphics[scale=0.6]{img/dendrogram-gap-11.png}
 \caption{Every figure should include a caption with a figure description.}
 \label{fig-example}
 \end{center}
 \end{figure}
 
 
-
-\subsection{Structure of the Report}
-
-If needed, this section could be structured. If the homework is composed of several tasks (or questions), the report on each of them could be presented in a separate section (use \LaTeX's {\tt \\subsection} command). The report of the results should be brief. If really needed, any  more extensive results of your homework should be reported in the Appendix (see Appendix~\ref{app-res} and~\ref{app-code}).
-
-\subsection{Paragraphs}
-
-A short note on the paragraphs: these are introduced in \LaTeX\ by an empty line before the paragraph.
-
 \subsection*{Honor Code}
 
 % The following paragraph of your report should be included as is - do % not change it.
 
 My answers to homework are my own work. I did not make solutions or code available to anyone else. I did not engage in any other activities that will dishonestly improve my results or dishonestly improve/hurt the results of others.
-
-\appendix
-\appendixpage
-\section{\label{app-res}Detailed Results of Experiments}
-
-If you consider that report should include detailed results in the form of tables and figures, include them here. Essential results should be included in the main part of the report (section on results).
-
-\section{\label{app-code}Program Code}
-
-Each homework will require a development of specific implementation in Python. Most of the homeworks will request that this code is submitted as a separate document. Only if this is not the case, that is, the homework requests that you provide the entire code in the report, do so in this appendix. Following is an example, and includes a part of code from Orange (\url{http://www.biolab.si/orange}) that implements 
-clustering.
-
-\begin{lstlisting}
-import random
-import Orange
-
-data_names = ["iris", "housing", "vehicle"]
-data_sets = [Orange.data.Table(name) for name in data_names]
-
-print "%10s %3s %3s %3s" % ("", "Rnd", "Div", "HC")
-for data, name in zip(data_sets, data_names):
-    random.seed(42)
-    km_random = Orange.clustering.kmeans.Clustering(data, centroids = 3)
-    km_diversity = Orange.clustering.kmeans.Clustering(data, centroids = 3,
-        initialization=Orange.clustering.kmeans.init_diversity)
-    km_hc = Orange.clustering.kmeans.Clustering(data, centroids = 3,
-        initialization=Orange.clustering.kmeans.init_hclustering(n=100))
-    print "%10s %3d %3d %3d" % (name, km_random.iteration, \
-    km_diversity.iteration, km_hc.iteration)
-\end{lstlisting}
 
 \end{document}
