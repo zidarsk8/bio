@@ -1,5 +1,5 @@
 
-f = open("data/rosalind_edit.txt")
+f = open("data/rosalind_edta_test2.txt")
 
 lines = [i.strip() for i in f.readlines()]
 
@@ -16,6 +16,7 @@ def levenshtein(seq1, seq2):
     return thisrow[len(seq2) - 1]
 
 result = str(levenshtein(lines[0],lines[1]))
+print result
 
 f = open("data/result_edit.txt" ,"w")
 f.write(result)

@@ -9,15 +9,14 @@ class NW:
     t = ""
 
     def __init__(self):
-
-        self.blosum = self.setBlosum(filename)
+        self.setBlosum62()
 
     def setBlosum(self,b):
-        blosum = {}
-        for i,j in b:
+        self.blosum = {}
+        for i,j in b.items():
             x,y = i
-            blosum[x,y] = j
-            blosum[y,x] = j
+            self.blosum[x,y] = j
+            self.blosum[y,x] = j
 
     def setBlosum62(self):
         from Bio.SubsMat.MatrixInfo import blosum62
@@ -50,12 +49,12 @@ class NW:
         self.t = t
 
         # dict of (score, list of tuples from the best score, has gap)
-        M = defaultdict(lambda: (0,[]))
+        M = defaultdict(lambda: (0,(-1,-1,'','')))
 
         for i in range(len(s)):
-            M[i,-1] = (M[i-1,-1][0] + self.gapPenalty, (i-1, 0))
+            M[i,-1] = (M[i-1,-1][0] + self.gapPenalty, (i-1, -1),'-','-')
         for j in range(len(t)):
-            M[-1,j] = (M[-1,j-1][0] + self.gapPenalty, (0,j-1))
+            M[-1,j] = (M[-1,j-1][0] + self.gapPenalty, (-1,j-1),'-','-')
 
         [self.cost(M,i,j) for i in range(len(s)) for j in range(len(t))]
 
@@ -78,7 +77,7 @@ class NW:
 
 
 
-f = open('data/rosalind_glob_test.txt')
+#f = open('data/rosalind_glob_test.txt')
 f = open('data/rosalind_glob.txt')
 s = f.readline().strip()
 t = f.readline().strip()
