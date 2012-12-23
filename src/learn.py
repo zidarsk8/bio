@@ -1,21 +1,14 @@
 import Orange
-lines = [i.strip().split(',') for i in open('data/train.csv').readlines()[1:]]
+import random
+import cPickle
+import math
 
-X = []
-y = []
 
-for line in lines:
-    X.append(line[1:])
-    y.append(line[0])
 
 
 def listToOrangeSingleClass(X,y):
-    features = [Orange.feature.Continuous("%d" % i) for i in range(len(X[0]))]
-    class_var = Orange.feature.Discrete("class", values=["0","1","2","3","4"])
-    domain = Orange.data.Domain(features + [class_var])
-    data = Orange.data.Table(domain)
-    [data.append(Orange.data.Instance(domain, list(X[i])+[str(y[i])])) 
-            for i in range(len(X))]
+    data, domain, features, class_var = cPickle.load(open('data/orage_tbl.pkl'))
+    [data.append(Orange.data.Instance(domain, list(X[i])+[y[i]] )) for i in range(len(X))]
     return data
 
 
@@ -32,10 +25,51 @@ def getProb(trainD, trainC, testD , lrn):
             for i in orangeTestD]
 
 
+
+def nb(trainD, trainC, testD):
+    learner = Orange.classification.bayes.NaiveLearner(name="naiveBayes")
+    return getProb(trainD, trainC, testD, learner)
+
 def knn(trainD, trainC, testD):
     knnLearner = Orange.classification.knn.kNNLearner(name="knn")
     return getProb(trainD, trainC, testD, knnLearner)
 
+def randInt(f,t,n):
+    start = f + int(random.random() * (t - f - n))
+    return (start, start + n)
+
+def score(y,p):
+    return 1.*len([i for i in xrange(len(y)) if y[i] == p[i]])/len(y)
+
+def crossval(x,y,f):
+    n = 6
+    l = len(x)
+    segment = int(math.ceil(1.*l/n))
+    res = []
+    for i in range(0, l, segment):
+        trainx = x[i : i+segment]
+        trainy = y[i : i+segment]
+        interval = max( 
+                ( i , randInt(0,i,segment) ) , 
+                ( l-(i+segment) , randInt(i+segment,l,segment)))[1]
+        #print i , i+segment , interval
+        testx = x[interval[0]: interval[1]]
+        testy = y[interval[0]: interval[1]]
+        predy = f(trainx, trainy, testx)
+        print score(trainy, predy)
+        res += predy
+
+    return res
 
 
-prob = knn(X[100:],y[100:],X[:100])
+
+
+x,y,d = cPickle.load(open('data/pack_small.pkl'))
+
+r = crossval(x, y, nb)
+
+#prob = knn(X[100:],y[100:],X[:100])
+
+
+
+
