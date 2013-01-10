@@ -1,11 +1,12 @@
 import networkx as nx
+import collections
+import random
 import pylab
 import re
 import lev
-from collections import defaultdict
 
 def getReverseIndex(joined):
-    ri = defaultdict(list) 
+    ri = collections.defaultdict(list) 
 
     [[ri[gene].append(name) for gene in genes] 
             for name, genes in joined.items()]
@@ -22,27 +23,57 @@ def getData():
         set([i.strip() for i in x[1].split(",")]) )
         ,l)
 
-    l = l[:1000]
+    l = l[:2000]
 
-    joined = defaultdict(set)
+    joined = collections.defaultdict(set)
     for (i,j) in l:
         joined[i] = joined[i].union(j) 
 
-    return (joined, ri)
+    return joined
 
 
+def getNxGraph(joined, connectedOnly = True):
+    ri = getReverseIndex(joined)
+    G = nx.Graph()
+    if not connectedOnly:
+        [G.add_node(name) for name in joined.keys()]
 
-joined, ri = getData()
+    [G.add_edge(name,othername) 
+            for name, genes in joined.items() 
+            for gene in genes 
+            for othername in ri[gene] if name != othername]
+    
+    return G
 
+def getClusters(g, iterLimit=100):
 
-G = nx.Graph()
+    clusters = {j:i for i,j in enumerate(g.nodes())}
 
-#[G.add_node(name) for name in joined.keys()] # this can be used to include the non connected nodes too
+    def labelCounter(nei):
+        return collections.Counter(clusters[n] for n in nei)
 
-[G.add_edge(name,othername) for name, genes in joined.items() for gene in genes for othername in ri[gene] if name != othername]
+    for i in xrange(iterLimit):
+        nodes = g.nodes()
+        random.shuffle(nodes)
+        for node in nodes:
+            count = labelCounter(g.neighbors(node))
+            if len(count) == 0:
+                continue
+
+            m = max(count.itervalues())
+            candidates = [i for i,j in count.iteritems() if j == m]
+            random.shuffle(candidates)
+            clusters[node] = candidates[0]
+
+    return clusters
+
+    
+
+joined = getData()
+
+G = getNxGraph(joined)
             
-from random import random
-nclusters = defaultdict(lambda: int(random()*3))
+nclusters = getClusters(G)
 ngenes = {name:len(genes) for name, genes in joined.items()}
 
 pos = nx.spring_layout(G, iterations=50)
