@@ -43,14 +43,21 @@ def getNxGraph(joined, connectedOnly = True):
     
     return G
 
-def getClusters(g, iterLimit=100):
+def getClusters(g, iterLimit=1000):
 
     clusters = {j:i for i,j in enumerate(g.nodes())}
 
     def labelCounter(nei):
         return collections.Counter(clusters[n] for n in nei)
 
-    for i in xrange(iterLimit):
+    def getCandidate(count):
+        m = max(count.itervalues())
+        c = [i for i,j in count.iteritems() if j == m]
+        random.shuffle(c)
+        return c[0]
+
+    for ii in xrange(iterLimit):
+        change = False
         nodes = g.nodes()
         random.shuffle(nodes)
         for node in nodes:
@@ -58,15 +65,22 @@ def getClusters(g, iterLimit=100):
             if len(count) == 0:
                 continue
 
-            m = max(count.itervalues())
-            candidates = [i for i,j in count.iteritems() if j == m]
-            random.shuffle(candidates)
-            clusters[node] = candidates[0]
+            candidate = getCandidate(count)
 
+            change |= clusters[node] != candidate
+
+            clusters[node] = candidate
+
+        if not change :
+            break
+            
+
+    ind = set(clusters.values())
+    mainNodes = [j for i,j in enumerate(g.nodes()) if i in ind]
     return clusters
 
 
-def plotG(G, ngenes, iterations = 50):
+def plotG(G, ngenes, iterations = 100):
 
     nclusters = getClusters(G)
 
@@ -78,15 +92,15 @@ def plotG(G, ngenes, iterations = 50):
 
     nodes = G.nodes() #fix node positions
     nx.draw_networkx_nodes(G, pos, nodes,
-        node_size = [ 50*ngenes[a] for a in nodes],
+        node_size = [ ngenes[a] for a in nodes],
         node_color = [ nclusters[a] for a in nodes ],
         linewidths = 0.1,
         alpha=0.4) #just because the colors are dark
 
-    # turn this on when cluster
-    #nx.draw_networkx_labels(G, pos)
-
     nx.draw_networkx_edges(G, pos, alpha=0.2)
+
+
+    #nx.draw_networkx_labels(G, pos)
 
     pylab.axis("off")
     pylab.show()
@@ -96,7 +110,8 @@ joined = getData(3000)
 
 G = getNxGraph(joined)
 
-size = lambda x: len(x)**(8/10.)
+size = lambda x: len(x)**(8/10.) * 50
 ngenes = {name:size(genes) for name, genes in joined.items()}
 
 plotG(nx.connected_component_subgraphs(G)[0], ngenes)
+
