@@ -43,7 +43,7 @@ def getNxGraph(joined, connectedOnly = True):
     
     return G
 
-def getClusters(g, iterLimit=1000):
+def getClusters(g, iterLimit=100):
 
     clusters = {j:i for i,j in enumerate(g.nodes())}
 
@@ -66,28 +66,28 @@ def getClusters(g, iterLimit=1000):
                 continue
 
             candidate = getCandidate(count)
-
             change |= clusters[node] != candidate
-
             clusters[node] = candidate
 
         if not change :
             break
-            
+    print "cluster iterations: %4d" % ii
 
     ind = set(clusters.values())
     mainNodes = [j for i,j in enumerate(g.nodes()) if i in ind]
     return clusters
 
 
-def plotG(G, ngenes, iterations = 100):
+def plotG(G, ngenes, nclusters, iterations = 100):
 
-    nclusters = getClusters(G)
+
+    print "number of nodes:    %4d" % len(G.nodes())
+    print "number of edges:    %4d" % len(G.edges())
+    print "number of clusters: %4d" % len(set(nclusters.values()))
+
 
     pos = nx.spring_layout(G, iterations=iterations)
-    nx.draw(G, pos)
-    #pylab.savefig("dsull.pdf")
-
+    nx.draw(G, pos) #somehow makes bg white
     pylab.clf() #prepare a new figure
 
     nodes = G.nodes() #fix node positions
@@ -114,12 +114,19 @@ def plotG(G, ngenes, iterations = 100):
     pylab.show()
     #pylab.savefig("nicer.pdf")
 
+
+
 joined = getData(3000)
 
 G = getNxGraph(joined)
 
 size = lambda x: len(x)**(8/10.) * 50
+size = lambda x: (len(x) * 50 )**(8/10.)
 ngenes = {name:size(genes) for name, genes in joined.items()}
 
-plotG(nx.connected_component_subgraphs(G)[0], ngenes)
+nclusters = getClusters(G,3000)
+
+subgraph = nx.connected_component_subgraphs(G)[0]
+
+plotG(subgraph, ngenes, nclusters, iterations = 500)
 
