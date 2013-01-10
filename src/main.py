@@ -1,5 +1,7 @@
+import matplotlib.pyplot as plt
 import networkx as nx
 import collections
+import cPickle
 import random
 import pylab
 import re
@@ -78,7 +80,7 @@ def getClusters(g, iterLimit=100):
     return clusters
 
 
-def plotG(G, ngenes, nclusters, iterations = 100):
+def plotG(G, pos, ngenes, nclusters, joined, allLabels = False, fontSize = 10):
 
 
     print "number of nodes:    %4d" % len(G.nodes())
@@ -86,7 +88,6 @@ def plotG(G, ngenes, nclusters, iterations = 100):
     print "number of clusters: %4d" % len(set(nclusters.values()))
 
 
-    pos = nx.spring_layout(G, iterations=iterations)
     nx.draw(G, pos) #somehow makes bg white
     pylab.clf() #prepare a new figure
 
@@ -97,36 +98,91 @@ def plotG(G, ngenes, nclusters, iterations = 100):
         linewidths = 0.1,
         alpha=0.4) #just because the colors are dark
 
-    nx.draw_networkx_edges(G, pos, alpha=0.2)
+    nx.draw_networkx_edges(G, pos, alpha=0.2, width = 0.4)
 
     ri = getReverseIndex({i:[j] for i,j in nclusters.items()})
     ri = [i[1] for i in ri.items()]
     
     cCount = {i:len(j) for i,j in joined.items()}
+
     cLabels = set([sorted([(cCount[j],j) for j in i])[-1][1] for i in ri])
     
-    cpos = {p: (pos[p] if p in cLabels else [100,100])  
+    cpos = {p: (pos[p] if (p in cLabels) or allLabels else [100,100])  
             for i,p in enumerate(pos)}
 
-    nx.draw_networkx_labels(G, cpos)
+    nx.draw_networkx_labels(G, cpos, font_size=fontSize)
+
 
     pylab.axis("off")
     pylab.show()
     #pylab.savefig("nicer.pdf")
 
+    
+
+def plotDegreeDistribution(G, log=False):
+    deg = nx.degree_histogram(G)
+    if log:
+        deg = [i+1 for i in deg]
+        plt.yscale('log')
+        plt.xscale('log')
+    l = plt.plot(range(len(deg)), deg)
+    plt.xlabel('Degree')
+    plt.ylabel('Number of nodes')
+    plt.title('Degree distribution of the network')
+    plt.show()
 
 
-joined = getData(3000)
+def plotSizesOfConnected(G):
+    deg = sorted(map(len,G))[:-1]
 
-G = getNxGraph(joined)
+    n, bins, patches = plt.hist(deg, 20, facecolor='blue', log=True)
+    plt.xlabel('Degree')
+    plt.ylabel('Count')
+    plt.title('Distribution of sizes of connected components')
+    plt.show()
 
-size = lambda x: len(x)**(8/10.) * 50
-size = lambda x: (len(x) * 50 )**(8/10.)
-ngenes = {name:size(genes) for name, genes in joined.items()}
 
-nclusters = getClusters(G,3000)
+def extractCluster(joined,clusters,name):
+    cl = clusters[name]
+    elements = set([i for i,j in clusters.items() if j == cl])
+    joined = {i:j for i,j in joined.items() if i in elements}
 
-subgraph = nx.connected_component_subgraphs(G)[0]
+    G = getNxGraph(joined, False)
+    subgraphs = nx.connected_component_subgraphs(G)
+    pos = nx.spring_layout(subgraphs[0], iterations=500 )
 
-plotG(subgraph, ngenes, nclusters, iterations = 500)
+    size2 = lambda x: (len(x) * 50 )**(8/10.)
+    ngenes = {name:size2(genes) for name, genes in joined.items()}
+    nclusters = {i:1 for i in elements}
+
+    plotG(G, pos, ngenes, nclusters, joined, True, 8)
+
+
+
+#joined = getData()
+#
+#G = getNxGraph(joined, False)
+#subgraphs = nx.connected_component_subgraphs(G)
+#pos = nx.spring_layout(subgraphs[0], iterations=500 )
+#nclusters = getClusters(subgraphs[0],5000)
+#
+#size1 = lambda x: len(x)**(8/10.) * 50
+#size2 = lambda x: (len(x) * 50 )**(8/10.)
+#ngenes = {name:size2(genes) for name, genes in joined.items()}
+#
+#cPickle.dump((joined,G,subgraphs,pos,nclusters,ngenes), open("data/dump.pkl","w"))
+
+joined,G,subgraphs,pos,nclusters,ngenes = cPickle.load(open("data/dump.pkl"))
+
+
+
+plotG(subgraphs[0], pos, ngenes, nclusters, joined)
+plotDegreeDistribution(G)
+plotDegreeDistribution(G,True)
+plotSizesOfConnected(subgraphs)
+
+print "largest diameter:   %4d" % nx.diameter(subgraphs[0])
+
+for name in ["Breast cancer", "Deafness", "Diabetes mellitus"]:
+    extractCluster(joined, nclusters, name)
 
