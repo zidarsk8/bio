@@ -99,8 +99,16 @@ def plotG(G, ngenes, iterations = 100):
 
     nx.draw_networkx_edges(G, pos, alpha=0.2)
 
+    ri = getReverseIndex({i:[j] for i,j in nclusters.items()})
+    ri = [i[1] for i in ri.items()]
+    
+    cCount = {i:len(j) for i,j in joined.items()}
+    cLabels = set([sorted([(cCount[j],j) for j in i])[-1][1] for i in ri])
+    
+    cpos = {p: (pos[p] if p in cLabels else [100,100])  
+            for i,p in enumerate(pos)}
 
-    #nx.draw_networkx_labels(G, pos)
+    nx.draw_networkx_labels(G, cpos)
 
     pylab.axis("off")
     pylab.show()
