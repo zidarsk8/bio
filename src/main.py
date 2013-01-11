@@ -86,6 +86,7 @@ def plotG(G, pos, ngenes, nclusters, joined, allLabels = False, fontSize = 10):
     print "number of nodes:    %4d" % len(G.nodes())
     print "number of edges:    %4d" % len(G.edges())
     print "number of clusters: %4d" % len(set(nclusters.values()))
+    print "cluster diameter:   %4d" % nx.diameter(G)
 
 
     nx.draw(G, pos) #somehow makes bg white
@@ -134,6 +135,7 @@ def plotDegreeDistribution(G, log=False):
 
 def plotSizesOfConnected(G):
     deg = sorted(map(len,G))[:-1]
+    print "excluded connected: %4d" % max(map(len,G))
 
     n, bins, patches = plt.hist(deg, 20, facecolor='blue', log=True)
     plt.xlabel('Degree')
@@ -163,16 +165,17 @@ def extractCluster(joined,clusters,name):
 #
 #G = getNxGraph(joined, False)
 #subgraphs = nx.connected_component_subgraphs(G)
-#pos = nx.spring_layout(subgraphs[0], iterations=500 )
-#nclusters = getClusters(subgraphs[0],5000)
+#pos = nx.spring_layout(subgraphs[0], iterations=2000 )
+#nclusters = getClusters(subgraphs[0],10000)
 #
 #size1 = lambda x: len(x)**(8/10.) * 50
 #size2 = lambda x: (len(x) * 50 )**(8/10.)
 #ngenes = {name:size2(genes) for name, genes in joined.items()}
 #
-#cPickle.dump((joined,G,subgraphs,pos,nclusters,ngenes), open("data/dump.pkl","w"))
+#cPickle.dump((joined,G,subgraphs,pos,nclusters,ngenes), 
+#        open("data/dump_2000_10000.pkl","w"))
 
-joined,G,subgraphs,pos,nclusters,ngenes = cPickle.load(open("data/dump.pkl"))
+joined,G,subgraphs,pos,nclusters,ngenes = cPickle.load(open("data/dump_2000_10000.pkl"))
 
 
 
@@ -181,8 +184,11 @@ plotDegreeDistribution(G)
 plotDegreeDistribution(G,True)
 plotSizesOfConnected(subgraphs)
 
-print "largest diameter:   %4d" % nx.diameter(subgraphs[0])
+
+print ""
 
 for name in ["Breast cancer", "Deafness", "Diabetes mellitus"]:
+    print ""
+    print name
     extractCluster(joined, nclusters, name)
 
