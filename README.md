@@ -1,4 +1,4 @@
 bio
 ===
 
-Classworf for Introduction to Bioinformatics
+Classwork for Introduction to Bioinformatics
